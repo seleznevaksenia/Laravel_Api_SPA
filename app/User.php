@@ -30,4 +30,13 @@ class User extends Authenticatable
     public function companies(){
        return $this->hasMany(Company::class);
     }
+    public function vendors(){
+        return $this->hasMany(Vendor::class);
+    }
+    public function products(){
+        return $this->hasManyThrough(Product::class, Vendor::class);
+    }
+    public function productsHistory(){
+        return $this->hasManyThrough(ProductHistory::class, Vendor::class);
+    }
 }

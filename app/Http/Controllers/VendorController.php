@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\SaleItems;
+use App\Vendor;
 use Illuminate\Http\Request;
 
-class SaleItemsController extends Controller
+class VendorController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class SaleItemsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\SaleItems  $saleItems
+     * @param  \App\Vendor  $vendor
      * @return \Illuminate\Http\Response
      */
-    public function show(SaleItems $saleItems)
+    public function show(Vendor $vendor)
     {
         //
     }
@@ -52,10 +52,10 @@ class SaleItemsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\SaleItems  $saleItems
+     * @param  \App\Vendor  $vendor
      * @return \Illuminate\Http\Response
      */
-    public function edit(SaleItems $saleItems)
+    public function edit(Vendor $vendor)
     {
         //
     }
@@ -64,10 +64,10 @@ class SaleItemsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\SaleItems  $saleItems
+     * @param  \App\Vendor  $vendor
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SaleItems $saleItems)
+    public function update(Request $request, Vendor $vendor)
     {
         //
     }
@@ -75,10 +75,10 @@ class SaleItemsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\SaleItems  $saleItems
+     * @param  \App\Vendor  $vendor
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SaleItems $saleItems)
+    public function destroy(Vendor $vendor)
     {
         //
     }

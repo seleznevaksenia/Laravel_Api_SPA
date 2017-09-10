@@ -4,11 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Withdraw extends Model
+class SaleItem extends Model
 {
     protected $guarded = [];
 
     public function company(){
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Sale::class);
     }
 }

@@ -11,15 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('home');
 Route::resource('/sales', 'SaleController');
 Route::resource('/sale_items', 'SaleItemsController');
+Route::resource('/order', 'OrderController');
+Route::resource('/order_items', 'OrderItemsController');
 Route::resource('/payments', 'PaymentController');
 Route::resource('/withdraws', 'WithdrawController');
 Route::resource('/company', 'CompanyController');
+Route::resource('/vendor', 'VendorController');
+Route::resource('/product', 'ProductController');
+Route::resource('/product/history', 'ProductHistoryController');

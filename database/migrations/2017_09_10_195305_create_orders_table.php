@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateWithdrawsTable extends Migration
+class CreateOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateWithdrawsTable extends Migration
      */
     public function up()
     {
-        Schema::create('withdraws', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->increments('id')->index();
             $table->integer('company_id')->index();
-            $table->dateTime('date')->index();
-            $table->integer('value');
+            $table->dateTime('date');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateWithdrawsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('withdraws');
+        Schema::dropIfExists('orders');
     }
 }
