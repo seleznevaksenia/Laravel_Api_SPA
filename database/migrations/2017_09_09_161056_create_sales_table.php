@@ -20,7 +20,6 @@ class CreateSalesTable extends Migration
             $table->string('ttn', 20)->unique();
             $table->decimal('cost', 10, 2);
             $table->decimal('price', 10, 2);
-            $table->decimal('payed', 10, 2);
             $table->text('description')->nullable();
             $table->timestamps();
         });

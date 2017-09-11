@@ -14,4 +14,7 @@ class Sale extends Model
     public function saleItems(){
         return $this->hasMany(SaleItem::class);
     }
+    public static function getSales(){
+        return auth()->user()->sales;
+    }
 }

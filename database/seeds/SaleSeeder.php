@@ -16,7 +16,6 @@ class SaleSeeder extends Seeder
                 'company_id' => $faker->numberBetween(1,5),
                 'cost' => $faker->randomFloat(2, 0, 100000),
                 'price' => $faker->randomFloat(2, 0, 100000),
-                'payed' => $faker->randomFloat(2, 0, 100000),
                 'description' => $faker->sentence,
                 'date' => $faker->dateTime,
                 'ttn' => $faker->unique()->randomNumber()

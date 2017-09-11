@@ -11,4 +11,7 @@ class Payment extends Model
     public function company(){
         return $this->belongsTo(Company::class);
     }
+    public static function getPayments(){
+        return auth()->user()->payments;
+    }
 }

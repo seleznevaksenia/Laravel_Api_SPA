@@ -11,4 +11,7 @@ class ProductHistory extends Model
     public function vendor(){
         return $this->belongsTo(Vendor::class);
     }
+    public static function getProductsHistory(){
+        return auth()->user()->productsHistory;
+    }
 }

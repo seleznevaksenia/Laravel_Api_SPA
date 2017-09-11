@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
+use App\User;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -24,6 +26,11 @@ class HomeController extends Controller
     public function index()
     {
 
-        return view('home');
+//        $data = $data->only(['name','id', 'cost']);
+       $data =  User::calculate();
+//       dd($data[6]);
+        return view('home', compact('data'));
+
     }
+
 }

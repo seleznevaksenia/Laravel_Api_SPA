@@ -15,7 +15,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return auth()->user()->companies;
+        return response(auth()->user()->companies)->setStatusCode(202, 'OLOLO');
     }
 
     /**

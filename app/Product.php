@@ -17,4 +17,8 @@ class Product extends Model
     public function orderItem(){
         return $this->hasOne(OrderItem::class);
     }
+    public static function getProducts(){
+        return auth()->user()->products;
+    }
+
 }

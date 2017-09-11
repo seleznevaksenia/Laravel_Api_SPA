@@ -802,6 +802,11 @@ Vue.component('example', __webpack_require__(36));
 var app = new Vue({
   el: '#app'
 });
+$(document).ready(function () {
+  axios.get('/company/1').then(function (response) {
+    return console.log(response);
+  });
+});
 
 /***/ }),
 /* 10 */

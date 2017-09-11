@@ -11,4 +11,7 @@ class Withdraw extends Model
     public function company(){
         return $this->belongsTo(Company::class);
     }
+    public static function getWithdraws(){
+        return auth()->user()->withdraws;
+    }
 }
