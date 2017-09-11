@@ -11,4 +11,7 @@ class SaleItem extends Model
     public function company(){
         return $this->belongsTo(Sale::class);
     }
+    public function product(){
+        return $this->belongsTo(Product::class);
+    }
 }

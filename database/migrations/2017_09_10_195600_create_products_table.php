@@ -17,8 +17,8 @@ class CreateProductsTable extends Migration
             $table->increments('id')->index();
             $table->integer('vendor_id')->index();
             $table->string('name', 50);
-            $table->integer('price');
-            $table->integer('cost');
+            $table->decimal('cost', 10, 2);
+            $table->decimal('price', 10, 2);
             $table->text('description')->nullable();
             $table->string('image', 100)->nullable();
             $table->timestamps();

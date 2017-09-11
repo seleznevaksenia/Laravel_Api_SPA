@@ -17,7 +17,8 @@ class CreatePaymentsTable extends Migration
             $table->increments('id')->index();
             $table->integer('company_id')->index();
             $table->dateTime('date')->index();
-            $table->integer('value');
+            $table->decimal('value', 10,2);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

@@ -16,9 +16,10 @@ class CreateSaleItemsTable extends Migration
         Schema::create('sale_items', function (Blueprint $table) {
             $table->increments('id')->index();
             $table->integer('sale_id')->index();
-            $table->string('name', 50);
+            $table->integer('product_id')->index();
             $table->integer('qtu');
-            $table->integer('cost');
+            $table->decimal('cost', 10, 2);
+            $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }

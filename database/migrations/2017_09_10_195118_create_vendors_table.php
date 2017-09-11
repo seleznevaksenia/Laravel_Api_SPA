@@ -22,7 +22,7 @@ class CreateVendorsTable extends Migration
             $table->string('email')->nullable();
             $table->string('site')->nullable();
             $table->string('address')->nullable();
-            $table->integer('current_account')->nullable();
+            $table->string('current_account')->nullable();
             $table->string('bank')->nullable();
             $table->string('town')->nullable();
             $table->integer('mfo')->nullable();

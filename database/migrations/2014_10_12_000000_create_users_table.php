@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->rememberToken();
-            $table->integer('current_account')->nullable();
+            $table->string('current_account')->nullable();
             $table->string('bank')->nullable();
             $table->string('town')->nullable();
             $table->integer('mfo')->nullable();

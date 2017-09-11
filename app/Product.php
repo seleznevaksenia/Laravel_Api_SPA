@@ -11,4 +11,10 @@ class Product extends Model
     public function vendor(){
         return $this->belongsTo(Vendor::class);
     }
+    public function saleItem(){
+        return $this->hasOne(SaleItem::class);
+    }
+    public function orderItem(){
+        return $this->hasOne(OrderItem::class);
+    }
 }
