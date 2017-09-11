@@ -14,7 +14,7 @@ class VendorController extends Controller
      */
     public function index()
     {
-        //
+        return auth()->user()->vendors;
     }
 
     /**
@@ -35,7 +35,7 @@ class VendorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return auth()->user()->vendors()->save(new Vendor(request()->all()));
     }
 
     /**
@@ -46,7 +46,7 @@ class VendorController extends Controller
      */
     public function show(Vendor $vendor)
     {
-        //
+        return $vendor;
     }
 
     /**
@@ -69,7 +69,7 @@ class VendorController extends Controller
      */
     public function update(Request $request, Vendor $vendor)
     {
-        //
+        return tap($vendor)-update(request()->all());
     }
 
     /**
@@ -80,6 +80,6 @@ class VendorController extends Controller
      */
     public function destroy(Vendor $vendor)
     {
-        //
+        return $vendor->delete();
     }
 }

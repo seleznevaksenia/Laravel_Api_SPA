@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use App\Sale;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class SaleController extends Controller
      */
     public function index()
     {
-        //
+        $company = Company::find(session('company_id'));
+        return $company->sales;
     }
 
     /**
@@ -35,7 +37,8 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $company = Company::find(session('company_id'));
+        return $company->sales()->save(new Sale(request()->all()));
     }
 
     /**
@@ -57,7 +60,7 @@ class SaleController extends Controller
      */
     public function edit(Sale $sale)
     {
-        //
+        return $sale;
     }
 
     /**
@@ -69,7 +72,7 @@ class SaleController extends Controller
      */
     public function update(Request $request, Sale $sale)
     {
-        //
+        return tap($sale)->update(request()->all());
     }
 
     /**
@@ -80,6 +83,6 @@ class SaleController extends Controller
      */
     public function destroy(Sale $sale)
     {
-        //
+        return $sale->delete();
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use App\ProductHistory;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -14,7 +15,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        return auth()->user()->products;
     }
 
     /**
@@ -35,7 +36,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return  auth()->user()->products()->save(new Product(request()->all()));
     }
 
     /**
@@ -46,7 +47,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
+        return $product;
     }
 
     /**
@@ -69,7 +70,8 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        ProductHistory::create($product->except('image'));
+        return tap($product)->update(request()->all());
     }
 
     /**
@@ -80,6 +82,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        ProductHistory::create($product->except('image'));
+        return $product->delete();
     }
 }

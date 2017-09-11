@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use App\Order;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $company = Company::find(session('company_id'));
+        return $company->orders;
     }
 
     /**
@@ -35,7 +37,8 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $company = Company::find(session('company_id'));
+        return $company->orders()->save(new Order(request()->all()));
     }
 
     /**
@@ -46,7 +49,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return $order;
     }
 
     /**
@@ -57,7 +60,7 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+
     }
 
     /**
@@ -69,7 +72,7 @@ class OrderController extends Controller
      */
     public function update(Request $request, Order $order)
     {
-        //
+        return tap($order)->update(request()->all());
     }
 
     /**
@@ -80,6 +83,6 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        return $order->delete();
     }
 }

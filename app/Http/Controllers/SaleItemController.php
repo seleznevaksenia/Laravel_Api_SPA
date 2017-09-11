@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
+use App\Sale;
 use App\SaleItem;
 use Illuminate\Http\Request;
 
@@ -14,7 +16,8 @@ class SaleItemController extends Controller
      */
     public function index()
     {
-        //
+        $sale = Sale::find(request('sale_id'));
+        return $sale->saleItems;
     }
 
     /**
@@ -35,7 +38,13 @@ class SaleItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $sale_item = SaleItem::create(request()->all());
+        $sale = Sale::find(request('sale_id'));
+        $sale->update([
+            'cost' => round($sale_item->cost * $sale_item->qtu),
+            'price' => round($sale_item->price * $sale_item->qtu)
+        ]);
+        return $sale_item;
     }
 
     /**
@@ -46,7 +55,7 @@ class SaleItemController extends Controller
      */
     public function show(SaleItem $saleItem)
     {
-        //
+        return $saleItem;
     }
 
     /**
@@ -57,7 +66,13 @@ class SaleItemController extends Controller
      */
     public function edit(SaleItem $saleItem)
     {
-        //
+        $sale_item = tap($saleItem)->update(request()->all());
+        $sale = Sale::find(request('sale_id'));
+        $sale->update([
+            'cost' => round($sale_item->cost * $sale_item->qtu),
+            'price' => round($sale_item->price * $sale_item->qtu)
+        ]);
+        return $sale_item;
     }
 
     /**
@@ -80,6 +95,6 @@ class SaleItemController extends Controller
      */
     public function destroy(SaleItem $saleItem)
     {
-        //
+        return $saleItem->delete();
     }
 }

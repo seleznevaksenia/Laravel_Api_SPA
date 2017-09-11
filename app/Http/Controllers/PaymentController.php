@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
 use App\Payment;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        //
+        $company = Company::find(session('company_id'));
+        return $company->payments;
     }
 
     /**
@@ -35,7 +37,8 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $company = Company::find(session('company_id'));
+        return $company->payments()->save(new Payment(request()->all()));
     }
 
     /**
@@ -46,7 +49,7 @@ class PaymentController extends Controller
      */
     public function show(Payment $payment)
     {
-        //
+        return $payment;
     }
 
     /**
@@ -69,7 +72,7 @@ class PaymentController extends Controller
      */
     public function update(Request $request, Payment $payment)
     {
-        //
+        return tap($payment)->update(request()->all());
     }
 
     /**
@@ -80,6 +83,6 @@ class PaymentController extends Controller
      */
     public function destroy(Payment $payment)
     {
-        //
+        return $payment->delete();
     }
 }

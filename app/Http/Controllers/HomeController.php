@@ -25,12 +25,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-
-//        $data = $data->only(['name','id', 'cost']);
-       $data =  User::calculate();
-//       dd($data[6]);
+        $data = User::calculate();
         return view('home', compact('data'));
-
     }
 
 }

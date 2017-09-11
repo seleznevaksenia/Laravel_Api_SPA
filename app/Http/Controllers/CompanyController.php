@@ -15,7 +15,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return response(auth()->user()->companies)->setStatusCode(202, 'OLOLO');
+        return auth()->user()->companies;
     }
 
     /**
@@ -25,7 +25,7 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        return  dd(request()->all());
+
     }
 
     /**
@@ -70,7 +70,7 @@ class CompanyController extends Controller
      */
     public function update(Request $request, Company $company)
     {
-
+        return tap($company)->update(request()->all());
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
+use App\Order;
 use App\OrderItem;
 use Illuminate\Http\Request;
 
@@ -14,7 +16,8 @@ class OrderItemController extends Controller
      */
     public function index()
     {
-        //
+        $order = Order::find(request('order_id'));
+        return $order->orderItems;
     }
 
     /**
@@ -35,7 +38,7 @@ class OrderItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return OrderItem::create(request()->all());
     }
 
     /**
@@ -46,7 +49,7 @@ class OrderItemController extends Controller
      */
     public function show(OrderItem $orderItem)
     {
-        //
+        return $orderItem;
     }
 
     /**
@@ -57,7 +60,7 @@ class OrderItemController extends Controller
      */
     public function edit(OrderItem $orderItem)
     {
-        //
+
     }
 
     /**
@@ -69,7 +72,7 @@ class OrderItemController extends Controller
      */
     public function update(Request $request, OrderItem $orderItem)
     {
-        //
+        return tap($orderItem)->update(request()->all());
     }
 
     /**
@@ -80,6 +83,6 @@ class OrderItemController extends Controller
      */
     public function destroy(OrderItem $orderItem)
     {
-        //
+        return $orderItem->delete();
     }
 }

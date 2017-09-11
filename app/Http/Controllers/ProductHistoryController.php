@@ -14,7 +14,7 @@ class ProductHistoryController extends Controller
      */
     public function index()
     {
-        //
+        return auth()->user()->productsHistory;
     }
 
     /**
@@ -24,7 +24,7 @@ class ProductHistoryController extends Controller
      */
     public function create()
     {
-        //
+        return  auth()->user()->productsHistory()->save(new ProductHistory(request()->all()));
     }
 
     /**
@@ -46,7 +46,7 @@ class ProductHistoryController extends Controller
      */
     public function show(ProductHistory $productHistory)
     {
-        //
+        return $productHistory;
     }
 
     /**
@@ -69,7 +69,7 @@ class ProductHistoryController extends Controller
      */
     public function update(Request $request, ProductHistory $productHistory)
     {
-        //
+        return tap($productHistory)->update(request()->all());
     }
 
     /**
@@ -80,6 +80,6 @@ class ProductHistoryController extends Controller
      */
     public function destroy(ProductHistory $productHistory)
     {
-        //
+        return $productHistory->delete();
     }
 }

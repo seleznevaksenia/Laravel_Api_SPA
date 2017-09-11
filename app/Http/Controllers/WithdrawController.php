@@ -14,7 +14,7 @@ class WithdrawController extends Controller
      */
     public function index()
     {
-        //
+        return auth()->user()->withdraws;
     }
 
     /**
@@ -35,7 +35,7 @@ class WithdrawController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return auth()->user()->withdraws()->save(new Withdraw(request()->all()));
     }
 
     /**
@@ -46,7 +46,7 @@ class WithdrawController extends Controller
      */
     public function show(Withdraw $withdraw)
     {
-        //
+        return $withdraw;
     }
 
     /**
@@ -69,7 +69,7 @@ class WithdrawController extends Controller
      */
     public function update(Request $request, Withdraw $withdraw)
     {
-        //
+        return tap($withdraw)->update(request()->all());
     }
 
     /**
@@ -80,6 +80,6 @@ class WithdrawController extends Controller
      */
     public function destroy(Withdraw $withdraw)
     {
-        //
+        return $withdraw->delete();
     }
 }
