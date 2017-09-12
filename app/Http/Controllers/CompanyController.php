@@ -3,84 +3,71 @@
 namespace App\Http\Controllers;
 
 use App\Company;
-use App\User;
-use Illuminate\Http\Request;
+use App\Http\Requests\CompanyRequest;
+use App\Http\Resources\CompanyResource;
 
 class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\CompanyResource
      */
     public function index()
     {
-        return auth()->user()->companies;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
+        return CompanyResource::collection(auth()->user()->companies);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\CompanyRequest $request
+     * @return \App\Http\Resources\CompanyResource
      */
-    public function store(Request $request)
+    public function store(CompanyRequest $request)
     {
-        return  auth()->user()->companies()->save(new Company(request()->all()));
+        $data = auth()->user()->companies()
+            ->save(new Company(request()
+                ->only(array_keys($request->rules()))));
+        return new CompanyResource($data);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Company  $company
-     * @return \Illuminate\Http\Response
+     * @param  \App\Company $company
+     * @return \App\Http\Resources\CompanyResource
      */
     public function show(Company $company)
     {
-        return $company;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Company  $company
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Company $company)
-    {
-
+        return new CompanyResource($company);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Company  $company
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\CompanyRequest $request
+     * @param  \App\Company $company
+     * @return \App\Http\Resources\CompanyResource
      */
-    public function update(Request $request, Company $company)
+    public function update(CompanyRequest $request, Company $company)
     {
-        return tap($company)->update(request()->all());
+        $data = tap($company)->update(request()
+            ->only(array_keys($request->rules())));
+        return new CompanyResource($data);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Company  $company
+     * @param  \App\Company $company
      * @return \Illuminate\Http\Response
      */
     public function destroy(Company $company)
     {
-        $company->delete();
+        if ($company->delete()){
+            return response()->json(["status" => ["Success"]], 200);
+        }
+        return response()->json(["error" => ["Something wont wrong"]], 500);
     }
 }

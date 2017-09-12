@@ -2,99 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use App\Company;
+use App\Http\Requests\SaleItemRequest;
+use App\Http\Resources\SaleItemResource;
+use App\Http\Resources\SaleResource;
 use App\Sale;
 use App\SaleItem;
-use Illuminate\Http\Request;
+
 
 class SaleItemController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  \App\Sale $sale
+     * @return \App\Http\Resources\SaleItemResource
      */
-    public function index()
+    public function index(Sale $sale)
     {
-        $sale = Sale::find(request('sale_id'));
-        return $sale->saleItems;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return SaleItemResource::collection($sale->saleItems()->paginate(20));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\SaleItemRequest $request
+     * @param  \App\Sale $sale
+     * @return array with sale_item and sale
      */
-    public function store(Request $request)
+    public function store(SaleItemRequest $request, Sale $sale)
     {
-        $sale_item = SaleItem::create(request()->all());
-        $sale = Sale::find(request('sale_id'));
+        $sale_item = $sale->saleItems()->save(new SaleItem(request()->only(array_keys($request->rules()))));
         $sale->update([
-            'cost' => round($sale_item->cost * $sale_item->qtu),
-            'price' => round($sale_item->price * $sale_item->qtu)
+            'cost' => round($sale->price + ($sale_item->cost * $sale_item->qtu), 2),
+            'price' => round($sale->price + ($sale_item->price * $sale_item->qtu), 2)
         ]);
-        return $sale_item;
+        $data = [
+            'sale_item' => new SaleItemResource($sale_item),
+            'sale' => new SaleResource($sale_item)
+        ];
+        return $data;
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\SaleItem  $saleItem
-     * @return \Illuminate\Http\Response
+     * @param  \App\Sale $sale
+     * @param  \App\SaleItem $saleItem
+     * @return \App\Http\Resources\SaleItemResource
      */
-    public function show(SaleItem $saleItem)
+    public function show(Sale $sale, SaleItem $saleItem)
     {
-        return $saleItem;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\SaleItem  $saleItem
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(SaleItem $saleItem)
-    {
-        $sale_item = tap($saleItem)->update(request()->all());
-        $sale = Sale::find(request('sale_id'));
-        $sale->update([
-            'cost' => round($sale_item->cost * $sale_item->qtu),
-            'price' => round($sale_item->price * $sale_item->qtu)
-        ]);
-        return $sale_item;
+        return new SaleItemResource($saleItem);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\SaleItem  $saleItem
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\SaleItemRequest $request
+     * @param  \App\Sale $sale
+     * @param  \App\SaleItem $saleItem
+     * @return array with sale_item and sale
      */
-    public function update(Request $request, SaleItem $saleItem)
+    public function update(SaleItemRequest $request, Sale $sale, SaleItem $saleItem)
     {
-        //
+        $sale_item = tap($saleItem)->update(new SaleItem(request()->only(array_keys($request->rules()))));
+        $sale = tap($sale)->update([
+            'cost' => round($sale->price + ($sale_item->cost * $sale_item->qtu), 2),
+            'price' => round($sale->price + ($sale_item->price * $sale_item->qtu), 2)
+        ]);
+        $data = [
+            'sale_item' => new SaleItemResource($sale_item),
+            'sale' => new SaleResource($sale)
+        ];
+        return $data;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\SaleItem  $saleItem
+     * @param  \App\Sale $sale
+     * @param  \App\SaleItem $saleItem
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SaleItem $saleItem)
+    public function destroy(Sale $sale, SaleItem $saleItem)
     {
-        return $saleItem->delete();
+        $sale_item = $saleItem;
+        if ($saleItem->delete()) {
+            $sale = tap($sale)->update([
+                'cost' => round($sale->price - ($sale_item->cost * $sale_item->qtu), 2),
+                'price' => round($sale->price - ($sale_item->price * $sale_item->qtu), 2)
+            ]);
+            return response()->json([
+                "status" => ["Success"],
+                'sale' => new SaleResource($sale)
+            ], 200);
+        }
+        return response()->json(["error" => ["Something wont wrong"]], 500);
     }
 }

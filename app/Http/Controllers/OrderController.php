@@ -2,77 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Company;
+use App\Http\Requests\OrderRequest;
+use App\Http\Resources\OrderResource;
 use App\Order;
-use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\OrderResource
      */
     public function index()
     {
-        $company = Company::find(session('company_id'));
-        return $company->orders;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $company = request()->attributes->get('company');
+        return OrderResource::collection($company->orders);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\OrderRequest  $request
+     * @return \App\Http\Resources\OrderResource
      */
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
-        $company = Company::find(session('company_id'));
-        return $company->orders()->save(new Order(request()->all()));
+        $company = request()->attributes->get('company');
+        $data = $company->orders()->save(new Order(request()->only(array_keys($request->rules()))));
+        return new OrderResource($data);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\OrderResource
      */
     public function show(Order $order)
     {
-        return $order;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Order $order)
-    {
-
+        return new OrderResource($order);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\OrderRequest  $request
      * @param  \App\Order  $order
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\OrderResource
      */
-    public function update(Request $request, Order $order)
+    public function update(OrderRequest $request, Order $order)
     {
-        return tap($order)->update(request()->all());
+        $data = tap($order)->update(request()->only(array_keys($request->rules())));
+        return new OrderResource($data);
     }
 
     /**
@@ -83,6 +64,13 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        return $order->delete();
+        $order_copy = $order;
+        if ($order->delete()){
+            foreach($order_copy->orderItems as $item){
+                $item->delete();
+            }
+            return response()->json(["status" => ["Success"]], 200);
+        }
+        return response()->json(["error" => ["Something wont wrong"]], 500);
     }
 }

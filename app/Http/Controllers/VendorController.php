@@ -2,84 +2,72 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\VendorRequest;
+use App\Http\Resources\VendorResource;
 use App\Vendor;
-use Illuminate\Http\Request;
 
 class VendorController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\VendorResource
      */
     public function index()
     {
-        return auth()->user()->vendors;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return VendorResource::collection(auth()->user()->vendors);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\VendorRequest $request
+     * @return \App\Http\Resources\VendorResource
      */
-    public function store(Request $request)
+    public function store(VendorRequest $request)
     {
-        return auth()->user()->vendors()->save(new Vendor(request()->all()));
+        $data = auth()->user()->vendors()
+            ->save(new Vendor(request()
+                ->only(array_keys($request->rules()))));
+        return new VendorResource($data);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Vendor  $vendor
-     * @return \Illuminate\Http\Response
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\VendorResource
      */
     public function show(Vendor $vendor)
     {
-        return $vendor;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Vendor  $vendor
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Vendor $vendor)
-    {
-        //
+        return new VendorResource($vendor);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Vendor  $vendor
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\VendorRequest $request
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\VendorResource
      */
-    public function update(Request $request, Vendor $vendor)
+    public function update(VendorRequest $request, Vendor $vendor)
     {
-        return tap($vendor)-update(request()->all());
+        $data = tap($vendor)->update(request()
+            ->only(array_keys($request->rules())));
+        return new VendorResource($data);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Vendor  $vendor
+     * @param  \App\Vendor $vendor
      * @return \Illuminate\Http\Response
      */
     public function destroy(Vendor $vendor)
     {
-        return $vendor->delete();
+        if ($vendor->delete()){
+            return response()->json(["status" => ["Success"]], 200);
+        }
+        return response()->json(["error" => ["Something wont wrong"]], 500);
     }
 }

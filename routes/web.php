@@ -14,13 +14,22 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-Route::resource('/sale', 'SaleController');
-Route::resource('/sale_items', 'SaleItemController');
-Route::resource('/order', 'OrderController');
-Route::resource('/order_items', 'OrderItemController');
-Route::resource('/payment', 'PaymentController');
-Route::resource('/withdraw', 'WithdrawController');
-Route::resource('/company', 'CompanyController');
-Route::resource('/vendor', 'VendorController');
-Route::resource('/product', 'ProductController');
-Route::resource('/product/history', 'ProductHistoryController');
+
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::group(['middleware' => ['checkCompany']], function () {
+        Route::resource('/sales', 'SaleController');
+        Route::resource('/sales/{sale}/sale_items', 'SaleItemController');
+        Route::resource('/orders/{order}/order_items', 'OrderItemController');
+        Route::resource('/orders', 'OrderController');
+        Route::resource('/payments', 'PaymentController');
+        Route::resource('/withdraws', 'WithdrawController');
+    });
+    Route::resource('/company', 'CompanyController');
+    Route::resource('/vendors', 'VendorController');
+    Route::resource('/vendors/{vendor}/products', 'ProductController');
+    Route::resource('/vendors/{vendor}/products_history', 'ProductHistoryController');
+});
+
+
+

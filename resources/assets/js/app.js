@@ -20,9 +20,3 @@ Vue.component('example', require('./components/Example.vue'));
 const app = new Vue({
     el: '#app'
 });
-$(document).ready(function () {
-    axios.get(`/company/1`)
-        .then(response =>
-       console.log(response)
-    )
-});

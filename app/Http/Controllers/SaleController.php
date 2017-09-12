@@ -2,77 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use App\Company;
+use App\Http\Requests\SaleRequest;
+use App\Http\Resources\SaleResource;
 use App\Sale;
-use Illuminate\Http\Request;
 
 class SaleController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\SaleResource
      */
     public function index()
     {
-        $company = Company::find(session('company_id'));
-        return $company->sales;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $company = request()->attributes->get('company');
+        return SaleResource::collection($company->sales);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\SaleRequest  $request
+     * @return \App\Http\Resources\SaleResource
      */
-    public function store(Request $request)
+    public function store(SaleRequest $request)
     {
-        $company = Company::find(session('company_id'));
-        return $company->sales()->save(new Sale(request()->all()));
+        $company = request()->attributes->get('company');
+        $data = $company->sales()->save(new Sale(request()->only(array_keys($request->rules()))));
+        return new SaleResource($data);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Sale  $sale
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\SaleResource
      */
     public function show(Sale $sale)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Sale  $sale
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Sale $sale)
-    {
-        return $sale;
+        return new SaleResource($sale);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\SaleRequest  $request
      * @param  \App\Sale  $sale
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\SaleResource
      */
-    public function update(Request $request, Sale $sale)
+    public function update(SaleRequest $request, Sale $sale)
     {
-        return tap($sale)->update(request()->all());
+        $data = tap($sale)->update(request()->only(array_keys($request->rules())));
+        return new SaleResource($data);
     }
 
     /**
@@ -83,6 +64,13 @@ class SaleController extends Controller
      */
     public function destroy(Sale $sale)
     {
-        return $sale->delete();
+        $sale_copy = $sale;
+        if ($sale->delete()){
+            foreach($sale_copy->saleItems as $item){
+                $item->delete();
+            }
+            return response()->json(["status" => ["Success"]], 200);
+        }
+        return response()->json(["error" => ["Something wont wrong"]], 500);
     }
 }

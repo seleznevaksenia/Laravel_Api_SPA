@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Product;
 use App\ProductHistory;
+use App\Vendor;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -11,67 +14,52 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\ProductResource
      */
-    public function index()
+    public function index(Vendor $vendor)
     {
-        return auth()->user()->products;
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return ProductResource::collection($vendor->products()->paginate(20));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\ProductRequest  $request
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\ProductResource
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request, Vendor $vendor)
     {
-        return  auth()->user()->products()->save(new Product(request()->all()));
+        $data = $vendor->products()->save(new Product(request()->only(array_keys($request->rules()))));
+        return new ProductResource($data);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\ProductResource
      */
-    public function show(Product $product)
+    public function show(Vendor $vendor, Product $product)
     {
-        return $product;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Product $product)
-    {
-        //
+        return new ProductResource($product);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ProductRequest  $request
+     * @param  \App\Vendor $vendor
      * @param  \App\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ProductResource
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Vendor $vendor, Product $product)
     {
         ProductHistory::create($product->except('image'));
-        return tap($product)->update(request()->all());
+        $data = tap($product)->update(request()->only(array_keys($request->rules())));
+        return new ProductResource($data);
     }
 
     /**
@@ -82,7 +70,11 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        ProductHistory::create($product->except('image'));
-        return $product->delete();
+        $old_product = $product;
+        if ($product->delete()){
+            ProductHistory::create($old_product->except('image'));
+            return response()->json(["status" => ["Success"]], 200);
+        }
+        return response()->json(["error" => ["Something wont wrong"]], 500);
     }
 }

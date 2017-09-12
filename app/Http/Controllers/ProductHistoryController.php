@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductHistoryRequest;
+use App\Http\Resources\ProductHistoryResource;
 use App\ProductHistory;
+use App\Vendor;
 use Illuminate\Http\Request;
 
 class ProductHistoryController extends Controller
@@ -10,66 +13,52 @@ class ProductHistoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\ProductHistoryResource
      */
-    public function index()
+    public function index(Vendor $vendor)
     {
-        return auth()->user()->productsHistory;
-    }
+        return ProductHistoryResource::collection($vendor->productsHistory()->paginate(20));
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return  auth()->user()->productsHistory()->save(new ProductHistory(request()->all()));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Http\Requests\ProductHistoryRequest  $request
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\ProductHistoryResource
      */
-    public function store(Request $request)
+    public function store(ProductHistoryRequest $request, Vendor $vendor)
     {
-        //
+        $data = $vendor->productsHistory()->save(new ProductHistory(request()->only(array_keys($request->rules()))));
+        return new ProductHistoryResource($data);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\ProductHistory  $productHistory
-     * @return \Illuminate\Http\Response
+     * @param  \App\Vendor $vendor
+     * @return \App\Http\Resources\ProductHistoryResource
      */
-    public function show(ProductHistory $productHistory)
+    public function show(Vendor $vendor, ProductHistory $productHistory)
     {
-        return $productHistory;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\ProductHistory  $productHistory
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ProductHistory $productHistory)
-    {
-        //
+        return new ProductHistoryResource($productHistory);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\ProductHistoryRequest  $request
+     * @param  \App\Vendor $vendor
      * @param  \App\ProductHistory  $productHistory
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\ProductHistoryResource
      */
-    public function update(Request $request, ProductHistory $productHistory)
+    public function update(ProductHistoryRequest $request, Vendor $vendor, ProductHistory $productHistory)
     {
-        return tap($productHistory)->update(request()->all());
+        $data = tap($productHistory)->update(request()->only(array_keys($request->rules())));
+        return new ProductHistoryResource($data);
     }
 
     /**
@@ -80,6 +69,9 @@ class ProductHistoryController extends Controller
      */
     public function destroy(ProductHistory $productHistory)
     {
-        return $productHistory->delete();
+        if ($productHistory->delete()){
+            return response()->json(["status" => ["Success"]], 200);
+        }
+        return response()->json(["error" => ["Something wont wrong"]], 500);
     }
 }
