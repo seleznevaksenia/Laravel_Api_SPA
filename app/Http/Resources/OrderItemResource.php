@@ -20,7 +20,7 @@ class OrderItemResource extends Resource
             'product_id' => $this->product_id,
             'description' => $this->description,
             'qtu' => $this->qtu,
-            'date' => (string)$this->craated_at
+            'date' => (string)$this->created_at
         ];
     }
 }
